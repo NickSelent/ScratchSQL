@@ -19,7 +19,8 @@ Select id From Work Order BY Field3
 
 --See how it's ordered...
 Select * from Scratch
-
+--RESET Scratch
+--Update Scratch Set [Who] = NULL, [When] = NULL
 
 --This will be what a "get next" looks like...
 --It should return the key from your work table of next highest priorty item that has not been assigned.
@@ -28,7 +29,9 @@ Select * from Scratch
 --AND it is easy to reserve a block by prefilling [WHO] with a "Special" username
 --You also have a paper trail if you ever suspect that something is getting worked out of order you can verify your sort logic...
 DECLARE @fkid int
-UPDATE Scratch SET @fkid = fkid , [Who] = 'UserNameA', [When] = GetUTCDate() WHERE id = (Select Top 1 id from Scratch Where [WHO] IS NULL Order By id ASC)
+--UPDATE Scratch SET @fkid = fkid , [Who] = 'UserNameA', [When] = GetUTCDate() WHERE id = (Select Top 1 id from Scratch Where [WHO] IS NULL Order By id ASC)
+--Using TOP 1 is not as efficient as using MIN
+UPDATE Scratch SET @fkid = fkid , [Who] = 'UserNameA', [When] = GetUTCDate() WHERE id = (Select MIN(id) from Scratch Where [WHO] IS NULL)
 
 SELECT @fkid
 
